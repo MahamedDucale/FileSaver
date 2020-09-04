@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -22,7 +25,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
+ TextEditingController mycontroller = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -30,13 +33,35 @@ class _MyHomePageState extends State<MyHomePage> {
       body: new Center(
         child: new Column(
           children: <Widget>[
-            new TextField(),
-            new RaisedButton(onPressed: 
+            new TextFormField(controller: mycontroller),
+            new RaisedButton(onPressed: saveText
+            ,child: 
+            new Text("Save text to file")
+            ),
+            new RaisedButton(onPressed: returnText
+            ,child: 
+            new Text("Retrieve text from file")
             )
+           
           ]
         )
       )
     );
+  }
+  void saveText() async{
+    String path = await getPath();
+    File savedFile = new File(path + '/text.txt');
+    savedFile.writeAsString(mycontroller.text);
+  }
+  void returnText() async{
+    String path = await getPath();
+    File savedFile = new File(path + '/text.txt');
+    String text = await savedFile.readAsString();
+    print(text);
+  }
+  Future<String> getPath()async{
+    String mydir = getApplicationDocumentsDirectory().toString();
+    return mydir;
   }
 }
 
