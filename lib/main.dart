@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,6 +27,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
  TextEditingController mycontroller = new TextEditingController();
+ Map<String,Object> mymap = {
+   "id": 1,
+   "name": "Mahamed",
+   "height":1.76
+ };
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -51,17 +57,20 @@ class _MyHomePageState extends State<MyHomePage> {
   void saveText() async{
     String path = await getPath();
     File savedFile = new File(path + '/text.txt');
-    savedFile.writeAsString(mycontroller.text);
+    savedFile.writeAsString(jsonEncode(mymap));
   }
   void returnText() async{
     String path = await getPath();
     File savedFile = new File(path + '/text.txt');
     String text = await savedFile.readAsString();
-    print(text);
+    Map<String,Object> jsontext = jsonDecode(text);
+    Map<String,Object> adder = {"gender":mycontroller.text};
+    jsontext.addAll(adder);
+    print(jsontext);
   }
   Future<String> getPath()async{
-    String mydir = getApplicationDocumentsDirectory().toString();
-    return mydir;
+    Directory mydir = await getApplicationDocumentsDirectory();
+    return mydir.path;
   }
 }
 
